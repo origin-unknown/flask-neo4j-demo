@@ -122,30 +122,3 @@ def persons():
         request.args.get('q', '')
     )
     return jsonify(results=data)
-
-
-# ---
-
-# @app.route('/')
-# def index():
-#     def work(tx, topic, person):
-#         cond = []
-#         if topic: cond.append('id(t) = $topic')
-#         if person: cond.append('id(p) = $person')
-#         query = 'MATCH (t:Topic)-[r]-(p:Person) '\
-#             + (('WHERE ' + ' AND '.join(cond) + ' ') if cond else '')\
-#             + 'RETURN t.name AS topic_name, type(r) AS rel_type, p.name AS person_name '\
-#             + 'ORDER BY t.name, type(r), p.name'
-#         return tx.run(
-#             query, 
-#             topic=topic, 
-#             person=person
-#         ).data()
-# 
-#     db = get_db()
-#     data = db.read_transaction(
-#         work, 
-#         request.args.get('topic', 0, type=int), 
-#         request.args.get('person', 0, type=int)
-#     )
-#     return render_template('index.html', **locals())
