@@ -17,7 +17,7 @@
 	{% if data -%}
 	<ul>
 		{% for rel in data -%}
-		<li>{{ rel.topic_name }} - [:{{ rel.rel_type }}] - {{ rel.person_name }}</li>
+		<li>{{ rel.topic_name }} - [:{{ rel.type }}] - {{ rel.person_name }}</li>
 		{% endfor -%}
 	</ul>
 	{% else -%}

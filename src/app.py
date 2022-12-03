@@ -74,7 +74,7 @@ def index():
         return tx.run(
             'MATCH (t:Topic)-[r]-(p:Person) '
             'WHERE id(t) = $topic AND id(p) = $person '
-            'RETURN t.name AS topic_name, type(r) AS rel_type, p.name AS person_name '
+            'RETURN t.name AS topic_name, type(r) AS type, p.name AS person_name '
             'ORDER BY t.name, type(r), p.name', 
             topic=topic, 
             person=person
