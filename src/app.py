@@ -88,7 +88,7 @@ def index():
             request.form.get('topic', 0, type=int), 
             request.form.get('person', 0, type=int)
         )
-    return render_template('index.html', **locals())
+    return render_template('index.html', data=data)
 
 @app.route('/topics')
 def topics(): 
