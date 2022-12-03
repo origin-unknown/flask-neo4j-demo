@@ -32,35 +32,33 @@
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 	<script type="text/javascript">
-		(function() {
-			$(function() {
+		$(function() {
 
-				$('select[name="topic"]').select2({
-					ajax: {
-						url: '/topics', 
-						dataType: 'json'
-					}, 
-					width: '25%', 
-					placeholder: 'Choose a topic'
-				}).change(function() {
-					$('select[name="person"]').empty().trigger('change');
-				});
-
-				$('select[name="person"]').select2({
-					ajax: {
-						url: '/persons', 
-						dataType: 'json', 
-						data: function(params) {
-							params.topic = $('select[name="topic"]').val();
-							return params;
-						} 
-					}, 
-					width: '25%', 
-					placeholder: 'Choose a person'
-				});
-
+			$('select[name="topic"]').select2({
+				ajax: {
+					url: '/topics', 
+					dataType: 'json'
+				}, 
+				width: '25%', 
+				placeholder: 'Choose a topic'
+			}).change(function() {
+				$('select[name="person"]').empty().trigger('change');
 			});
-		})();
+
+			$('select[name="person"]').select2({
+				ajax: {
+					url: '/persons', 
+					dataType: 'json', 
+					data: function(params) {
+						params.topic = $('select[name="topic"]').val();
+						return params;
+					} 
+				}, 
+				width: '25%', 
+				placeholder: 'Choose a person'
+			});
+
+		});
 	</script>
 
 </body>
