@@ -32,7 +32,7 @@ def create_author_tx(tx, topic, person):
     return tx.run(
         'MERGE (t:Topic { name: $topic }) '
         'MERGE (p:Person { name: $person }) '
-        'MERGE (t)-[:CREATED_BY]->(p) ', 
+        'MERGE (p)-[:CREATED]->(t) ', 
         topic=topic, 
         person=person
     ).single()
@@ -41,7 +41,7 @@ def create_editor_tx(tx, topic, person):
     return tx.run(
         'MERGE (t:Topic { name: $topic }) '
         'MERGE (p:Person { name: $person }) '
-        'MERGE (t)-[:EDITED_BY]->(p) ', 
+        'MERGE (p)-[:EDITED]->(t) ', 
         topic=topic, 
         person=person
     ).single()
