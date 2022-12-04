@@ -1,7 +1,3 @@
-'''
-Flask Neo4J Demo
-'''
-
 from flask import (
     Flask, 
     g, 
