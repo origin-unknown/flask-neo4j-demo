@@ -17,7 +17,7 @@
 	{% if data -%}
 	<ul>
 		{% for rel in data -%}
-		<li>{{ rel.topic_name }} - [:{{ rel.type }}] - {{ rel.person_name }}</li>
+		<li>{{ rel.person_name }} - [:{{ rel.type }}] - {{ rel.topic_name }}</li>
 		{% endfor -%}
 	</ul>
 	{% else -%}
@@ -51,6 +51,7 @@
 					dataType: 'json', 
 					data: function(params) {
 						params.topic = $('select[name="topic"]').val();
+						params.q = params.term;
 						return params;
 					} 
 				}, 

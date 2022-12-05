@@ -28,56 +28,57 @@ def close_db(error):
         g.neo4j_db.close()
 
 
-def create_author_tx(tx, topic, person):
+def create_author_tx(tx, person, topic):
     return tx.run(
-        'MERGE (t:Topic { name: $topic }) '
         'MERGE (p:Person { name: $person }) '
-        'MERGE (t)-[:CREATED_BY]->(p) ', 
-        topic=topic, 
-        person=person
-    ).single()
+        'MERGE (t:Topic { name: $topic }) '
+        'MERGE (p)-[:CREATED]->(t) ', 
+        person=person, 
+        topic=topic
+    )
 
-def create_editor_tx(tx, topic, person):
+def create_editor_tx(tx, person, topic):
     return tx.run(
-        'MERGE (t:Topic { name: $topic }) '
         'MERGE (p:Person { name: $person }) '
-        'MERGE (t)-[:EDITED_BY]->(p) ', 
-        topic=topic, 
-        person=person
-    ).single()
+        'MERGE (t:Topic { name: $topic }) '
+        'MERGE (p)-[:EDITED]->(t) ', 
+        person=person, 
+        topic=topic
+    )
 
 
 with app.app_context():
     db = get_db()
 
     author_rels = (
-        ('JavaScript Development', 'Andy'), 
-        ('Python Development', 'Andy'), 
-        ('Ruby Development', 'Michael'), 
+        ('Andy', 'JavaScript Development'), 
+        ('Andy', 'Python Development'), 
+        ('Michael', 'Ruby Development'), 
     )
     for a,b in author_rels: 
         db.write_transaction(create_author_tx, a, b)
 
     editor_rels = (
-        ('JavaScript Development', 'Andy'), 
-        ('JavaScript Development', 'Michael'), 
-        ('JavaScript Development', 'Jennifer'), 
-        ('Python Development', 'Andy'), 
-        ('Python Development', 'Jennifer'), 
+        ('Andy', 'JavaScript Development'), 
+        ('Michael', 'JavaScript Development'), 
+        ('Jennifer', 'JavaScript Development'), 
+        ('Andy', 'Python Development'), 
+        ('Jennifer', 'Python Development'), 
     )
     for a,b in editor_rels: 
         db.write_transaction(create_editor_tx, a, b)
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    def work(tx, topic, person):
+    def work(tx, person, topic):
         return tx.run(
-            'MATCH (t:Topic)-[r]-(p:Person) '
-            'WHERE id(t) = $topic AND id(p) = $person '
-            'RETURN t.name AS topic_name, type(r) AS type, p.name AS person_name '
-            'ORDER BY t.name, type(r), p.name', 
-            topic=topic, 
-            person=person
+            'MATCH (p:Person)-[r]-(t:Topic) '
+            'WHERE id(p) = $person AND id(t) = $topic '
+            'RETURN p.name AS person_name, type(r) AS type, t.name AS topic_name '
+            'ORDER BY p.name, type(r), t.name', 
+            person=person, 
+            topic=topic
         ).data()
     
     data = []
@@ -85,8 +86,8 @@ def index():
         db = get_db()
         data = db.read_transaction(
             work, 
-            request.form.get('topic', 0, type=int), 
-            request.form.get('person', 0, type=int)
+            request.form.get('person', 0, type=int), 
+            request.form.get('topic', 0, type=int)
         )
     return render_template('index.html', data=data)
 
@@ -108,7 +109,7 @@ def topics():
 def persons():
     def work(tx, topic, qs):
         return tx.run(
-            'MATCH (t:Topic)-[]-(p:Person) '
+            'MATCH (p:Person)-[]-(t:Topic) '
             'WHERE id(t) = $topic AND toLower(p.name) CONTAINS toLower($qs) '
             'RETURN DISTINCT id(p) AS id, p.name AS text '
             'ORDER By p.name', 
